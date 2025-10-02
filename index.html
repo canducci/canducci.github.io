@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorApp1</title>
+    <base href="/" />
+    <link href="_framework/dotnet.r8e42fl9ea.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-G48YfDaw4zl3tCPeKIcmU9bqa/41DBg/i1Vx/PEBsCI=" />
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="BlazorApp1.styles.css" rel="stylesheet" />
+    <link href="manifest.webmanifest" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <script type="importmap">{
+  "imports": {
+    "./_framework/blazor.webassembly.js": "./_framework/blazor.webassembly.0o6sltz4v8.js",
+    "./_framework/dotnet.native.js": "./_framework/dotnet.native.ki06310okv.js",
+    "./_framework/dotnet.js": "./_framework/dotnet.r8e42fl9ea.js",
+    "./_framework/dotnet.runtime.js": "./_framework/dotnet.runtime.580eknzmmv.js"
+  },
+  "scopes": {},
+  "integrity": {
+    "./_framework/blazor.webassembly.0o6sltz4v8.js": "sha256-QPblb0B3n+m0u11HG4nhpAiOn39aNT2Jm/OQ+6wpU4s=",
+    "./_framework/blazor.webassembly.js": "sha256-QPblb0B3n+m0u11HG4nhpAiOn39aNT2Jm/OQ+6wpU4s=",
+    "./_framework/dotnet.js": "sha256-G48YfDaw4zl3tCPeKIcmU9bqa/41DBg/i1Vx/PEBsCI=",
+    "./_framework/dotnet.native.js": "sha256-5DC+ewufH06dHFvNe2ShXJ4rJ2xXTbIwIok5p1WtB8o=",
+    "./_framework/dotnet.native.ki06310okv.js": "sha256-5DC+ewufH06dHFvNe2ShXJ4rJ2xXTbIwIok5p1WtB8o=",
+    "./_framework/dotnet.r8e42fl9ea.js": "sha256-G48YfDaw4zl3tCPeKIcmU9bqa/41DBg/i1Vx/PEBsCI=",
+    "./_framework/dotnet.runtime.580eknzmmv.js": "sha256-pfhJg2MOkVUy58SVr89By9FVqxss2F2M68vNi5p7Yc0=",
+    "./_framework/dotnet.runtime.js": "sha256-pfhJg2MOkVUy58SVr89By9FVqxss2F2M68vNi5p7Yc0="
+  }
+}</script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly.0o6sltz4v8.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
+    <script>
+        window.func = {
+
+            listFolder: async (dotNetObjectRef) => {
+                try {
+
+                    var dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+
+                    let names = [];
+
+                    for await (const entry of dirHandle.values()) {
+                        names.push(entry.name);
+                    }
+                    await dotNetObjectRef.invokeMethodAsync("ReceiveFolderHandle", names, DotNet.createJSObjectReference(dirHandle));
+                }
+                catch (e) {
+                    console.warn(e.message);
+                    console.debug(e);
+                }
+            },
+            openFolder: async () => {
+                const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+                for await (const entry of dirHandle.values()) {
+                    console.log(entry.kind, entry.name);
+                }
+                return dirHandle;
+            },
+            openFile: async (fileName, dirHandle) => {
+                const fileHandle = await dirHandle.getFileHandle(fileName, { create: false });
+
+                const file = await fileHandle.getFile();
+
+                console.log(file.name);
+
+                return await file.arrayBuffer();
+            }
+        };
+    </script>
+</body>
+
+</html>
